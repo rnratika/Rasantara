@@ -1,60 +1,74 @@
 package com.example.rasantara.ui.main
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rasantara.R
+import com.example.rasantara.data.model.RecipeResponse
+import com.example.rasantara.data.remote.ApiConfig
+import com.example.rasantara.ui.adapter.RecipeAdapter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var rvRecipes: RecyclerView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        rvRecipes = view.findViewById(R.id.rv_recipes)
+        progressBar = view.findViewById(R.id.progress_bar)
+
+        rvRecipes.layoutManager = LinearLayoutManager(requireContext())
+
+        getRecipes()
+    }
+
+    private fun getRecipes() {
+        progressBar.visibility = View.VISIBLE
+
+        val client = ApiConfig.getApiService().searchRecipes("c")
+
+        client.enqueue(object : Callback<RecipeResponse> {
+            override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
+                progressBar.visibility = View.GONE
+
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null && responseBody.meals != null) {
+                        val adapter = RecipeAdapter(responseBody.meals)
+                        rvRecipes.adapter = adapter
+                    } else {
+                        Toast.makeText(requireContext(), "Data resep kosong", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e("HomeFragment", "Gagal: ${response.message()}")
+                    Toast.makeText(requireContext(), "Gagal mengambil data", Toast.LENGTH_SHORT).show()
                 }
             }
+
+            override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
+                Log.e("HomeFragment", "Error: ${t.message}")
+                Toast.makeText(requireContext(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
