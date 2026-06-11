@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.rasantara.ui.main.HomeFragment
 import com.example.rasantara.ui.explore.ExploreFragment
+import com.example.rasantara.ui.favorite.FavoriteFragment
+import com.example.rasantara.ui.profile.ProfileFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +19,6 @@ class MainActivity : AppCompatActivity() {
 
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-
                 R.id.nav_home -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.nav_host_fragment, HomeFragment())
@@ -28,6 +29,20 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_explore -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.nav_host_fragment, ExploreFragment())
+                        .commit()
+                    true
+                }
+
+                R.id.nav_favorite -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.nav_host_fragment, FavoriteFragment())
+                        .commit()
+                    true
+                }
+
+                R.id.nav_profile -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.nav_host_fragment, ProfileFragment())
                         .commit()
                     true
                 }

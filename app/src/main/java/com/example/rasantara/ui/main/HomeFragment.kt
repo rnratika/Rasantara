@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button // Pastikan import Button ini ada
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -21,8 +22,6 @@ import com.example.rasantara.data.remote.ApiConfig
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-// Import model Recipe Anda di sini
 import com.example.rasantara.data.model.Recipe
 
 class HomeFragment : Fragment() {
@@ -30,6 +29,7 @@ class HomeFragment : Fragment() {
     private lateinit var rvCarousel: RecyclerView
     private lateinit var rvTrending: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var btnRefresh: Button // 1. Penambahan variabel tombol refresh (Poin 6)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,15 +44,22 @@ class HomeFragment : Fragment() {
         rvCarousel = view.findViewById(R.id.rv_home_carousel)
         rvTrending = view.findViewById(R.id.rv_home_trending)
         progressBar = view.findViewById(R.id.pb_home)
+        btnRefresh = view.findViewById(R.id.btn_home_refresh) // 2. Hubungkan dengan ID di XML Anda
 
         rvCarousel.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvTrending.layoutManager = LinearLayoutManager(requireContext())
+
+        // 3. Logika ketika tombol refresh diklik (Poin 6)
+        btnRefresh.setOnClickListener {
+            getRecipes()
+        }
 
         getRecipes()
     }
 
     private fun getRecipes() {
         progressBar.visibility = View.VISIBLE
+        btnRefresh.visibility = View.GONE // Sembunyikan tombol refresh saat mulai memuat data
 
         val client = ApiConfig.getApiService().searchRecipes("c")
 
@@ -65,6 +72,8 @@ class HomeFragment : Fragment() {
                     val mealsList = responseBody?.meals
 
                     if (!mealsList.isNullOrEmpty()) {
+                        btnRefresh.visibility = View.GONE // Tetap sembunyikan jika sukses mendownload data
+
                         val shuffledMeals = mealsList.shuffled()
 
                         val carouselItems = shuffledMeals.take(3)
@@ -73,16 +82,19 @@ class HomeFragment : Fragment() {
                         setupCarouselAdapter(carouselItems)
                         setupTrendingAdapter(trendingItems)
                     } else {
+                        btnRefresh.visibility = View.VISIBLE // Munculkan jika data ternyata kosong
                         Toast.makeText(requireContext(), "Data resep kosong", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Log.e("HomeFragment", "Gagal: ${response.message()}")
+                    btnRefresh.visibility = View.VISIBLE // Munculkan jika API error / server bermasalah
                     Toast.makeText(requireContext(), "Gagal mengambil data", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
                 progressBar.visibility = View.GONE
+                btnRefresh.visibility = View.VISIBLE // 4. Munculkan tombol refresh saat tidak ada koneksi (Poin 6)
                 Log.e("HomeFragment", "Error: ${t.message}")
                 Toast.makeText(requireContext(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
             }

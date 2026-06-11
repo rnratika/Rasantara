@@ -65,14 +65,15 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
                     showCategories()
                 } else {
                     isEnabled = false
-                    requireActivity().onBackPressedDispatcher.onBackPressed() // Keluar seperti biasa
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
         })
     }
 
     private fun setupRecyclerView() {
-        adapter = RecipeAdapter(emptyList())
+        // PERBAIKAN 1: Panggil constructor kosong tanpa emptyList()
+        adapter = RecipeAdapter()
         rvExplore.layoutManager = LinearLayoutManager(requireContext())
         rvExplore.adapter = adapter
     }
@@ -112,7 +113,8 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
         rvExplore.visibility = View.GONE
         tvNotFound.visibility = View.GONE
 
-        adapter = RecipeAdapter(emptyList())
+        // PERBAIKAN 2: Gunakan constructor kosong tanpa emptyList()
+        adapter = RecipeAdapter()
         rvExplore.adapter = adapter
     }
 
@@ -152,12 +154,12 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
         if (response.isSuccessful) {
             val list = response.body()?.meals
             if (list != null) {
-                adapter = RecipeAdapter(list)
-                rvExplore.adapter = adapter
+                // PERBAIKAN 3: Gunakan fungsi .setData() bawaan adapter Anda
+                adapter.setData(list)
                 tvNotFound.visibility = View.GONE
             } else {
-                adapter = RecipeAdapter(emptyList())
-                rvExplore.adapter = adapter
+                // PERBAIKAN 4: Kosongkan adapter menggunakan .setData() saat resep tidak ditemukan
+                adapter.setData(emptyList())
                 tvNotFound.visibility = View.VISIBLE
                 rvExplore.visibility = View.GONE
             }
