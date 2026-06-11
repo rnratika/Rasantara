@@ -13,9 +13,9 @@ import com.example.rasantara.data.model.Recipe
 class RecipeAdapter(private val listRecipe: List<Recipe>) : RecyclerView.Adapter<RecipeAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imgRecipe: ImageView = view.findViewById(R.id.img_recipe)
-        val tvName: TextView = view.findViewById(R.id.tv_recipe_name)
-        val tvCategory: TextView = view.findViewById(R.id.tv_recipe_category)
+        val imgRecipe: ImageView = view.findViewById(R.id.imgRecipe)
+        val tvName: TextView = view.findViewById(R.id.tvName)
+        val tvCategory: TextView = view.findViewById(R.id.tvCategory)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,10 +28,16 @@ class RecipeAdapter(private val listRecipe: List<Recipe>) : RecyclerView.Adapter
         holder.tvName.text = recipe.strMeal
         holder.tvCategory.text = "${recipe.strCategory} • ${recipe.strArea}"
 
-        // Glide untuk memuat gambar dari URL internet ke ImageView
         Glide.with(holder.itemView.context)
             .load(recipe.strMealThumb)
             .into(holder.imgRecipe)
+
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = android.content.Intent(context, com.example.rasantara.RecipeDetailActivity::class.java)
+            intent.putExtra("EXTRA_ID", recipe.idMeal)
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int = listRecipe.size

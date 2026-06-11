@@ -1,14 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.explore.ExploreFragment">
+    android:orientation="vertical"
+    android:background="#FAF8F5"
+    android:paddingHorizontal="16dp"
+    android:paddingBottom="16dp"
+    android:paddingTop="48dp">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eksplor Resep"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#222222" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:iconifiedByDefault="false"
+            app:queryHint="Cari resep makanan..."
+            app:queryBackground="@android:color/transparent" />
+    </androidx.cardview.widget.CardView>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_marginTop="16dp">
 
-</FrameLayout>
+        <ScrollView
+            android:id="@+id/layout_categories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="80dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jelajahi Berdasarkan Negara"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#444444"
+                    android:layout_marginBottom="12dp" />
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:rowCount="5">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_british"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_british" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Inggris" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_italy"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_italy" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Italia" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_japan"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_japan" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Jepang" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_mexico"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_mexico" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Meksiko" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_canadian"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_canadian" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Kanada" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_chinese"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_chinese" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Tiongkok" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_spanish"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_spanish" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Spanyol" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_thai"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_thai" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Thailand" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_turkish"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_turkish" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Turki" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_greek"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp">
+                        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                            <ImageView android:id="@+id/img_greek" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop"/>
+                            <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/orange_bottom_gradient"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|start" android:layout_margin="12dp" android:text="Yunani" android:textStyle="bold" android:textSize="18sp" android:textColor="#FFFFFF"/>
+                        </FrameLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </GridLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_explore"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:listitem="@layout/item_recipe" />
+
+        <ProgressBar
+            android:id="@+id/pb_explore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_not_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Resep tidak ditemukan"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

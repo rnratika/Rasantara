@@ -1,26 +1,34 @@
 package com.example.rasantara.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.rasantara.R
+import com.example.rasantara.RecipeDetailActivity
 import com.example.rasantara.data.model.RecipeResponse
 import com.example.rasantara.data.remote.ApiConfig
-import com.example.rasantara.ui.adapter.RecipeAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+// Import model Recipe Anda di sini
+import com.example.rasantara.data.model.Recipe
+
 class HomeFragment : Fragment() {
 
-    private lateinit var rvRecipes: RecyclerView
+    private lateinit var rvCarousel: RecyclerView
+    private lateinit var rvTrending: RecyclerView
     private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
@@ -33,10 +41,12 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        rvRecipes = view.findViewById(R.id.rv_recipes)
-        progressBar = view.findViewById(R.id.progress_bar)
+        rvCarousel = view.findViewById(R.id.rv_home_carousel)
+        rvTrending = view.findViewById(R.id.rv_home_trending)
+        progressBar = view.findViewById(R.id.pb_home)
 
-        rvRecipes.layoutManager = LinearLayoutManager(requireContext())
+        rvCarousel.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        rvTrending.layoutManager = LinearLayoutManager(requireContext())
 
         getRecipes()
     }
@@ -52,9 +62,16 @@ class HomeFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    if (responseBody != null && responseBody.meals != null) {
-                        val adapter = RecipeAdapter(responseBody.meals)
-                        rvRecipes.adapter = adapter
+                    val mealsList = responseBody?.meals
+
+                    if (!mealsList.isNullOrEmpty()) {
+                        val shuffledMeals = mealsList.shuffled()
+
+                        val carouselItems = shuffledMeals.take(3)
+                        val trendingItems = shuffledMeals.drop(3).take(10)
+
+                        setupCarouselAdapter(carouselItems)
+                        setupTrendingAdapter(trendingItems)
                     } else {
                         Toast.makeText(requireContext(), "Data resep kosong", Toast.LENGTH_SHORT).show()
                     }
@@ -70,5 +87,63 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun setupCarouselAdapter(items: List<Recipe>) {
+        rvCarousel.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_home_carousel, parent, false)
+                return object : RecyclerView.ViewHolder(view) {}
+            }
+
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+                val item = items[position]
+                val imgBg = holder.itemView.findViewById<ImageView>(R.id.img_carousel_bg)
+                val tvTitle = holder.itemView.findViewById<TextView>(R.id.tv_carousel_title)
+
+                tvTitle.text = item.strMeal
+                Glide.with(holder.itemView.context).load(item.strMealThumb).into(imgBg)
+
+                holder.itemView.setOnClickListener {
+                    val intent = Intent(requireContext(), RecipeDetailActivity::class.java)
+                    intent.putExtra("EXTRA_ID", item.idMeal)
+                    startActivity(intent)
+                }
+            }
+
+            override fun getItemCount(): Int = items.size
+        }
+    }
+
+    private fun setupTrendingAdapter(items: List<Recipe>) {
+        rvTrending.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_home_trending, parent, false)
+                return object : RecyclerView.ViewHolder(view) {}
+            }
+
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+                val item = items[position]
+                val imgThumb = holder.itemView.findViewById<ImageView>(R.id.img_trending)
+                val tvTitle = holder.itemView.findViewById<TextView>(R.id.tv_trending_title)
+                val tvSubtitle = holder.itemView.findViewById<TextView>(R.id.tv_trending_subtitle)
+
+                tvTitle.text = item.strMeal
+
+                val category = item.strCategory
+                val area = item.strArea
+                tvSubtitle.text = "$category • $area"
+
+                Glide.with(holder.itemView.context).load(item.strMealThumb).into(imgThumb)
+
+                holder.itemView.setOnClickListener {
+                    val intent = Intent(requireContext(), RecipeDetailActivity::class.java)
+                    intent.putExtra("EXTRA_ID", item.idMeal)
+                    startActivity(intent)
+                }
+            }
+
+            override fun getItemCount(): Int = items.size
+        }
     }
 }
