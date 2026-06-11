@@ -106,11 +106,36 @@ class RecipeDetailActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
-                btnRefresh.visibility = View.VISIBLE
-                Toast.makeText(this@RecipeDetailActivity, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
+                // Diubah: Jika koneksi gagal/offline, langsung coba muat dari database lokal
+                loadOfflineData(id)
             }
         })
+    }
+
+    private fun loadOfflineData(id: String) {
+        executorService.execute {
+            val favoriteDao = RecipeDatabase.getDatabase(this@RecipeDetailActivity).favoriteDao()
+            // Memanggil fungsi pencarian data berdasarkan ID di Dao Anda
+            val offlineRecipe = favoriteDao.getFavoriteById(id)
+
+            runOnUiThread {
+                progressBar.visibility = View.GONE
+                if (offlineRecipe != null) {
+                    btnRefresh.visibility = View.GONE
+
+                    tvDetailName.text = offlineRecipe.strMeal
+                    tvDetailCategory.text = "${offlineRecipe.strCategory} • ${offlineRecipe.strArea}"
+                    tvDetailInstructions.text = offlineRecipe.strInstructions
+
+                    Glide.with(this@RecipeDetailActivity)
+                        .load(offlineRecipe.strMealThumb)
+                        .into(ivDetailImage)
+                } else {
+                    btnRefresh.visibility = View.VISIBLE
+                    Toast.makeText(this@RecipeDetailActivity, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun checkFavoriteStatus(id: String) {
@@ -132,7 +157,8 @@ class RecipeDetailActivity : AppCompatActivity() {
                 strMeal = recipe.strMeal,
                 strMealThumb = recipe.strMealThumb,
                 strCategory = recipe.strCategory,
-                strArea = recipe.strArea
+                strArea = recipe.strArea,
+                strInstructions = recipe.strInstructions ?: "" // Diubah: Ikut menyimpan teks instruksi ke DB
             )
 
             if (isFavorite) {

@@ -19,4 +19,7 @@ interface FavoriteDao {
 
     @Query("SELECT EXISTS(SELECT * FROM favorite_recipe WHERE idMeal = :id)")
     fun isFavorite(id: String): Boolean
+
+    @Query("SELECT * FROM favorite_recipe WHERE idMeal = :id")
+    fun getFavoriteById(id: String): FavoriteRecipe?
 }

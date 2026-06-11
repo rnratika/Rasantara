@@ -10,5 +10,6 @@ data class FavoriteRecipe(
     val strMeal: String,
     val strMealThumb: String,
     val strCategory: String,
-    val strArea: String
+    val strArea: String,
+    val strInstructions: String
 )
