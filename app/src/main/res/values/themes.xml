@@ -1,9 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Rasantara" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+        <item name="colorSecondaryContainer">#FFE0B2</item> <item name="colorOnSecondaryContainer">#E58B23</item> </style>
 
     <style name="Theme.Rasantara" parent="Base.Theme.Rasantara" />
 </resources>

@@ -7,7 +7,7 @@
     android:layout_marginHorizontal="2dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardBackgroundColor="?attr/colorSurfaceContainerLow">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:text="Nama Makanan"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#222222" />
+                android:textColor="?attr/colorOnSurface" />
 
             <TextView
                 android:id="@+id/tv_trending_subtitle"
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:text="Category • Area"
                 android:textSize="13sp"
-                android:textColor="#777777"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginTop="4dp" />
         </LinearLayout>
     </LinearLayout>

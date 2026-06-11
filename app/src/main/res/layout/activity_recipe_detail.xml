@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAF8F5"
+    android:background="?attr/colorSurface"
     tools:context=".RecipeDetailActivity">
 
     <ScrollView
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
                 android:scaleType="centerCrop"
-                android:background="#CCCCCC" />
+                android:background="?attr/colorSurfaceVariant" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:layout_marginTop="-30dp"
                 app:cardCornerRadius="30dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -42,10 +42,10 @@
                         android:id="@+id/tv_detail_category"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="#F0EBE1"
+                        android:background="?attr/colorSurfaceVariant"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
-                        android:textColor="#555"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp"
                         tools:text="Kategori • Area" />
 
@@ -56,14 +56,14 @@
                         android:layout_marginTop="12dp"
                         android:textSize="26sp"
                         android:textStyle="bold"
-                        android:textColor="#222"
+                        android:textColor="?attr/colorOnSurface"
                         tools:text="Nama Resep Makanan" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="24dp"
-                        android:background="#E0E0E0" />
+                        android:background="?attr/colorOutlineVariant" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -72,7 +72,7 @@
                         android:text="Langkah Memasak"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:textColor="#D35400" />
+                        android:textColor="?attr/colorPrimary" />
 
                     <TextView
                         android:id="@+id/tv_detail_instructions"
@@ -81,7 +81,7 @@
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="40dp"
                         android:lineSpacingExtra="8dp"
-                        android:textColor="#444"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="15sp"
                         tools:text="Instruksi memasak akan muncul di sini..." />
 
@@ -118,9 +118,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="Tambah ke Favorit"
-        app:backgroundTint="#FFFFFF"
+        app:backgroundTint="?attr/colorSurfaceContainerHigh"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/btn_star_big_off"
+        app:tint="?attr/colorOnSurface"
+        app:srcCompat="@drawable/ic_love_outline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

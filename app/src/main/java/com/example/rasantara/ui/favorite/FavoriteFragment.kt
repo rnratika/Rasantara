@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rasantara.R
 import com.example.rasantara.data.local.RecipeDatabase
-import com.example.rasantara.ui.main.FavoriteAdapter
+import com.example.rasantara.ui.adapter.FavoriteAdapter
 import java.util.concurrent.ExecutorService
 
 class FavoriteFragment : Fragment() {

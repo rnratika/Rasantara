@@ -1,4 +1,4 @@
-package com.example.rasantara.ui.main
+package com.example.rasantara.ui.adapter
 
 import android.content.Intent
 import android.view.LayoutInflater
