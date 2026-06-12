@@ -1,9 +1,10 @@
 package com.example.rasantara.ui.explore
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.rasantara.R
-import com.example.rasantara.RecipeDetailActivity
 import com.example.rasantara.data.model.RecipeResponse
 import com.example.rasantara.data.remote.ApiConfig
 import com.example.rasantara.ui.adapter.RecipeAdapter
@@ -31,6 +31,12 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
     private lateinit var tvNotFound: TextView
     private lateinit var layoutCategories: ScrollView
 
+    private lateinit var layoutExploreError: LinearLayout
+    private lateinit var btnRefresh: Button
+
+    private var lastSearchQuery: String? = null
+    private var lastFilterArea: String? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -39,6 +45,9 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
         tvNotFound = view.findViewById(R.id.tv_not_found)
         layoutCategories = view.findViewById(R.id.layout_categories)
         val searchView = view.findViewById<SearchView>(R.id.search_view)
+
+        layoutExploreError = view.findViewById(R.id.layout_explore_error)
+        btnRefresh = view.findViewById(R.id.btn_explore_refresh)
 
         setupRecyclerView()
         setupCategoryCards(view)
@@ -59,6 +68,11 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
             }
         })
 
+        btnRefresh.setOnClickListener {
+            lastSearchQuery?.let { searchRecipeByName(it) }
+            lastFilterArea?.let { filterRecipeByArea(it) }
+        }
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (layoutCategories.visibility == View.GONE) {
@@ -72,7 +86,6 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
     }
 
     private fun setupRecyclerView() {
-        // PERBAIKAN 1: Panggil constructor kosong tanpa emptyList()
         adapter = RecipeAdapter()
         rvExplore.layoutManager = LinearLayoutManager(requireContext())
         rvExplore.adapter = adapter
@@ -102,67 +115,81 @@ class ExploreFragment : Fragment(R.layout.fragment_explore) {
         Glide.with(this).load("https://images.unsplash.com/photo-1529312266912-b33cfce2eefd?w=500&q=80").into(view.findViewById(R.id.img_greek))
     }
 
-    private fun showResults() {
-        layoutCategories.visibility = View.GONE
-        rvExplore.visibility = View.VISIBLE
-        tvNotFound.visibility = View.GONE
-    }
-
     private fun showCategories() {
         layoutCategories.visibility = View.VISIBLE
         rvExplore.visibility = View.GONE
         tvNotFound.visibility = View.GONE
+        layoutExploreError.visibility = View.GONE
 
-        // PERBAIKAN 2: Gunakan constructor kosong tanpa emptyList()
         adapter = RecipeAdapter()
         rvExplore.adapter = adapter
     }
 
-    private fun searchRecipeByName(query: String) {
-        showResults()
-        progressBar.visibility = View.VISIBLE
+    private fun showErrorState() {
+        layoutCategories.visibility = View.GONE
         rvExplore.visibility = View.GONE
+        tvNotFound.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        layoutExploreError.visibility = View.VISIBLE
+    }
+
+    private fun searchRecipeByName(query: String) {
+        lastSearchQuery = query
+        lastFilterArea = null
+
+        layoutCategories.visibility = View.GONE
+        rvExplore.visibility = View.GONE
+        tvNotFound.visibility = View.GONE
+        layoutExploreError.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
 
         ApiConfig.getApiService().searchRecipes(query).enqueue(object : Callback<RecipeResponse> {
             override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
                 handleApiResponse(response)
             }
             override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
+                showErrorState()
             }
         })
     }
 
     private fun filterRecipeByArea(area: String) {
-        showResults()
-        progressBar.visibility = View.VISIBLE
+        lastFilterArea = area
+        lastSearchQuery = null
+
+        layoutCategories.visibility = View.GONE
         rvExplore.visibility = View.GONE
+        tvNotFound.visibility = View.GONE
+        layoutExploreError.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
 
         ApiConfig.getApiService().filterByArea(area).enqueue(object : Callback<RecipeResponse> {
             override fun onResponse(call: Call<RecipeResponse>, response: Response<RecipeResponse>) {
                 handleApiResponse(response)
             }
             override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
+                showErrorState()
             }
         })
     }
 
     private fun handleApiResponse(response: Response<RecipeResponse>) {
         progressBar.visibility = View.GONE
-        rvExplore.visibility = View.VISIBLE
+        layoutExploreError.visibility = View.GONE
+
         if (response.isSuccessful) {
             val list = response.body()?.meals
             if (list != null) {
-                // PERBAIKAN 3: Gunakan fungsi .setData() bawaan adapter Anda
+                rvExplore.visibility = View.VISIBLE
                 adapter.setData(list)
                 tvNotFound.visibility = View.GONE
             } else {
-                // PERBAIKAN 4: Kosongkan adapter menggunakan .setData() saat resep tidak ditemukan
+                rvExplore.visibility = View.GONE
                 adapter.setData(emptyList())
                 tvNotFound.visibility = View.VISIBLE
-                rvExplore.visibility = View.GONE
             }
+        } else {
+            showErrorState()
         }
     }
 }
