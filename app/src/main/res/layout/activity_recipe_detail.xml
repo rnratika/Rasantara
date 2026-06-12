@@ -8,9 +8,11 @@
     tools:context=".RecipeDetailActivity">
 
     <ScrollView
+        android:id="@+id/layout_detail_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -100,16 +102,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/btn_detail_refresh"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layout_detail_error"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Muat Ulang"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_cable_disconnected"
+            android:contentDescription="Koneksi terputus" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Something went wrong."
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-bold"/>
+
+        <Button
+            android:id="@+id/btn_detail_refresh"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Muat ulang"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingVertical="12dp"
+            app:backgroundTint="#E58A21"
+            app:cornerRadius="24dp"
+            app:elevation="4dp" />
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_favorite"

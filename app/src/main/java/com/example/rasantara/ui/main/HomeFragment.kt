@@ -6,8 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button // Pastikan import Button ini ada
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -29,7 +30,10 @@ class HomeFragment : Fragment() {
     private lateinit var rvCarousel: RecyclerView
     private lateinit var rvTrending: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var btnRefresh: Button // 1. Penambahan variabel tombol refresh (Poin 6)
+    private lateinit var btnRefresh: Button
+
+    private lateinit var layoutHomeContent: LinearLayout
+    private lateinit var layoutHomeError: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,12 +48,14 @@ class HomeFragment : Fragment() {
         rvCarousel = view.findViewById(R.id.rv_home_carousel)
         rvTrending = view.findViewById(R.id.rv_home_trending)
         progressBar = view.findViewById(R.id.pb_home)
-        btnRefresh = view.findViewById(R.id.btn_home_refresh) // 2. Hubungkan dengan ID di XML Anda
+        btnRefresh = view.findViewById(R.id.btn_home_refresh)
+
+        layoutHomeContent = view.findViewById(R.id.layout_home_content)
+        layoutHomeError = view.findViewById(R.id.layout_home_error)
 
         rvCarousel.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvTrending.layoutManager = LinearLayoutManager(requireContext())
 
-        // 3. Logika ketika tombol refresh diklik (Poin 6)
         btnRefresh.setOnClickListener {
             getRecipes()
         }
@@ -59,7 +65,9 @@ class HomeFragment : Fragment() {
 
     private fun getRecipes() {
         progressBar.visibility = View.VISIBLE
-        btnRefresh.visibility = View.GONE // Sembunyikan tombol refresh saat mulai memuat data
+
+        layoutHomeContent.visibility = View.GONE
+        layoutHomeError.visibility = View.GONE
 
         val client = ApiConfig.getApiService().searchRecipes("c")
 
@@ -72,7 +80,8 @@ class HomeFragment : Fragment() {
                     val mealsList = responseBody?.meals
 
                     if (!mealsList.isNullOrEmpty()) {
-                        btnRefresh.visibility = View.GONE // Tetap sembunyikan jika sukses mendownload data
+                        layoutHomeContent.visibility = View.VISIBLE
+                        layoutHomeError.visibility = View.GONE
 
                         val shuffledMeals = mealsList.shuffled()
 
@@ -82,20 +91,24 @@ class HomeFragment : Fragment() {
                         setupCarouselAdapter(carouselItems)
                         setupTrendingAdapter(trendingItems)
                     } else {
-                        btnRefresh.visibility = View.VISIBLE // Munculkan jika data ternyata kosong
+                        layoutHomeContent.visibility = View.GONE
+                        layoutHomeError.visibility = View.VISIBLE
                         Toast.makeText(requireContext(), "Data resep kosong", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Log.e("HomeFragment", "Gagal: ${response.message()}")
-                    btnRefresh.visibility = View.VISIBLE // Munculkan jika API error / server bermasalah
+                    layoutHomeContent.visibility = View.GONE
+                    layoutHomeError.visibility = View.VISIBLE
                     Toast.makeText(requireContext(), "Gagal mengambil data", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
                 progressBar.visibility = View.GONE
-                btnRefresh.visibility = View.VISIBLE // 4. Munculkan tombol refresh saat tidak ada koneksi (Poin 6)
                 Log.e("HomeFragment", "Error: ${t.message}")
+
+                layoutHomeContent.visibility = View.GONE
+                layoutHomeError.visibility = View.VISIBLE
                 Toast.makeText(requireContext(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
             }
         })

@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +31,9 @@ class RecipeDetailActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var btnRefresh: Button
 
+    private lateinit var layoutDetailContent: ScrollView
+    private lateinit var layoutDetailError: LinearLayout
+
     private lateinit var fabFavorite: FloatingActionButton
     private var isFavorite = false
     private lateinit var executorService: ExecutorService
@@ -44,6 +49,9 @@ class RecipeDetailActivity : AppCompatActivity() {
         tvDetailInstructions = findViewById(R.id.tv_detail_instructions)
         progressBar = findViewById(R.id.pb_detail)
         btnRefresh = findViewById(R.id.btn_detail_refresh)
+
+        layoutDetailContent = findViewById(R.id.layout_detail_content)
+        layoutDetailError = findViewById(R.id.layout_detail_error)
 
         fabFavorite = findViewById(R.id.fab_favorite)
         executorService = RecipeDatabase.databaseWriteExecutor
@@ -74,7 +82,9 @@ class RecipeDetailActivity : AppCompatActivity() {
 
     private fun getRecipeDetail(id: String) {
         progressBar.visibility = View.VISIBLE
-        btnRefresh.visibility = View.GONE
+
+        layoutDetailContent.visibility = View.GONE
+        layoutDetailError.visibility = View.GONE
 
         val client = ApiConfig.getApiService().getRecipeDetail(id)
 
@@ -85,7 +95,8 @@ class RecipeDetailActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val recipe = response.body()?.meals?.get(0)
                     if (recipe != null) {
-                        btnRefresh.visibility = View.GONE
+                        layoutDetailContent.visibility = View.VISIBLE
+                        layoutDetailError.visibility = View.GONE
                         currentRecipe = recipe
 
                         tvDetailName.text = recipe.strMeal
@@ -96,17 +107,18 @@ class RecipeDetailActivity : AppCompatActivity() {
                             .load(recipe.strMealThumb)
                             .into(ivDetailImage)
                     } else {
-                        btnRefresh.visibility = View.VISIBLE
+                        layoutDetailContent.visibility = View.GONE
+                        layoutDetailError.visibility = View.VISIBLE
                         Toast.makeText(this@RecipeDetailActivity, "Data resep kosong", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    btnRefresh.visibility = View.VISIBLE
+                    layoutDetailContent.visibility = View.GONE
+                    layoutDetailError.visibility = View.VISIBLE
                     Toast.makeText(this@RecipeDetailActivity, "Gagal memuat data", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<RecipeResponse>, t: Throwable) {
-                // Diubah: Jika koneksi gagal/offline, langsung coba muat dari database lokal
                 loadOfflineData(id)
             }
         })
@@ -115,13 +127,13 @@ class RecipeDetailActivity : AppCompatActivity() {
     private fun loadOfflineData(id: String) {
         executorService.execute {
             val favoriteDao = RecipeDatabase.getDatabase(this@RecipeDetailActivity).favoriteDao()
-            // Memanggil fungsi pencarian data berdasarkan ID di Dao Anda
             val offlineRecipe = favoriteDao.getFavoriteById(id)
 
             runOnUiThread {
                 progressBar.visibility = View.GONE
                 if (offlineRecipe != null) {
-                    btnRefresh.visibility = View.GONE
+                    layoutDetailContent.visibility = View.VISIBLE
+                    layoutDetailError.visibility = View.GONE
 
                     tvDetailName.text = offlineRecipe.strMeal
                     tvDetailCategory.text = "${offlineRecipe.strCategory} • ${offlineRecipe.strArea}"
@@ -131,7 +143,8 @@ class RecipeDetailActivity : AppCompatActivity() {
                         .load(offlineRecipe.strMealThumb)
                         .into(ivDetailImage)
                 } else {
-                    btnRefresh.visibility = View.VISIBLE
+                    layoutDetailContent.visibility = View.GONE
+                    layoutDetailError.visibility = View.VISIBLE
                     Toast.makeText(this@RecipeDetailActivity, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -158,7 +171,7 @@ class RecipeDetailActivity : AppCompatActivity() {
                 strMealThumb = recipe.strMealThumb,
                 strCategory = recipe.strCategory,
                 strArea = recipe.strArea,
-                strInstructions = recipe.strInstructions ?: "" // Diubah: Ikut menyimpan teks instruksi ke DB
+                strInstructions = recipe.strInstructions ?: ""
             )
 
             if (isFavorite) {
